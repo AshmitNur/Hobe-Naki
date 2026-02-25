@@ -16,6 +16,7 @@ export function CartModal() {
 
         try {
             // 1. Create the main Order struct in Supabase
+            if (!supabase) throw new Error("Supabase is not initialized.");
             const { data: orderData, error: orderError } = await supabase
                 .from('orders')
                 .insert([

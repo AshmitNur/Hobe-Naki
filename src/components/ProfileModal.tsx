@@ -85,6 +85,7 @@ export function ProfileModal({ onClose }: ProfileModalProps) {
 
     useEffect(() => {
         const fetchOrders = async () => {
+            if (!supabase) return;
             const { data, error } = await supabase
                 .from('orders')
                 .select('*')
