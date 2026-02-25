@@ -31,6 +31,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
 
     useEffect(() => {
+        if (!auth) {
+            setIsLoading(false);
+            return;
+        }
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
             setIsLoading(false);
@@ -39,6 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const setupRecaptcha = () => {
+        if (!auth) throw new Error("Firebase auth is not initialized.");
         if (!(window as any).recaptchaVerifier) {
             (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
                 size: 'invisible',
@@ -50,6 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
             setupRecaptcha();
             const appVerifier = (window as any).recaptchaVerifier;
+            if (!auth) throw new Error("Firebase auth is not initialized.");
             const result = await signInWithPhoneNumber(auth, phone, appVerifier);
             setConfirmationResult(result);
             return { error: null };
@@ -70,6 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const signInWithEmail = async (email: string, password: string) => {
         try {
+            if (!auth) throw new Error("Firebase auth is not initialized.");
             await signInWithEmailAndPassword(auth, email, password);
             return { error: null };
         } catch (error) {
@@ -79,6 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const signUpWithEmail = async (email: string, password: string) => {
         try {
+            if (!auth) throw new Error("Firebase auth is not initialized.");
             await createUserWithEmailAndPassword(auth, email, password);
             return { error: null };
         } catch (error) {
@@ -87,6 +95,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     const signOut = async () => {
+        if (!auth) throw new Error("Firebase auth is not initialized.");
         await firebaseSignOut(auth);
     };
 
